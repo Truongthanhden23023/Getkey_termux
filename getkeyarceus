@@ -1,0 +1,54 @@
+tải termux
+link: https://f-droid.org/repo/com.termux_118.apk
+rồi tải xong thì 
+vào termux cho phép xong thì 
+lệnh setup : pkg install python
+pkg install sqlite
+rồi làm theo 
+nano arceus_keygen.py
+còn cái này dán vào 
+#!/usr/bin/env python
+
+import sqlite3
+import random
+import string
+
+# Kết nối đến cơ sở dữ liệu
+conn = sqlite3.connect('arceus_keys.db')
+c = conn.cursor()
+
+# Tạo bảng nếu chưa tồn tại
+c.execute('''CREATE TABLE IF NOT EXISTS arceus_keys
+             (hwid text, key text)''')
+conn.commit()
+
+def generate_key():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+
+def get_key(hwid):
+    # Kiểm tra xem HWID đã tồn tại trong cơ sở dữ liệu chưa
+    c.execute("SELECT key FROM arceus_keys WHERE hwid=?", (hwid,))
+    result = c.fetchone()
+    if result:
+        return result[0]
+    else:
+        # Nếu HWID chưa tồn tại, tạo key mới và lưu vào cơ sở dữ liệu
+        key = generate_key()
+        c.execute("INSERT INTO arceus_keys (hwid, key) VALUES (?, ?)", (hwid, key))
+        conn.commit()
+        return key
+
+# Sử dụng hàm để lấy key cho một HWID cụ thể
+hwid = input("Nhập HWID của bạn: ")
+key = get_key(hwid)
+print(f"Key của HWID {hwid} là: {key}")
+
+# Đóng kết nối đến cơ sở dữ liệu khi không cần nữa
+conn.close()
+xong thì 
+ctrl + X rồi enter rồi emter tiếp 
+xong thì 
+rồi sao chép này dán vào 
+chmod +x arceus_keygen.py
+xong thì làm này là xong 
+./arceus_keygen.py
